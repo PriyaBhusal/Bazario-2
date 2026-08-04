@@ -8,7 +8,7 @@
     bool isAuthPage = string.Equals(controllerName, "Account", StringComparison.OrdinalIgnoreCase)
                        && (string.Equals(actionName, "Login", StringComparison.OrdinalIgnoreCase)
                            || string.Equals(actionName, "Register", StringComparison.OrdinalIgnoreCase));
-    bool hideChrome = isAdminRoute || isAuthPage;
+    bool hideChrome = isAuthPage;
 
     bool isLoggedIn = !string.IsNullOrEmpty(Session["User"] as string);
     string username = Session["User"] as string;
@@ -36,11 +36,11 @@
     @if (!hideChrome)
     {
         <nav class="navbar-landing d-flex align-items-center justify-content-between">
-            <a href="@Url.Action("Index", "Home")" class="brand text-decoration-none">Bazario</a>
+            <a href="@Url.Action("Index", "Home", new { area = "" })" class="brand text-decoration-none">Bazario</a>
             <div class="nav-links d-none d-md-flex">
-                <a href="@Url.Action("Index", "Home")" class="@(isHome ? ActiveNavClass : InactiveNavClass)">Home</a>
-                <a href="@Url.Action("Index", "Products")" class="@(isCatalog ? ActiveNavClass : InactiveNavClass)">Catalog</a>
-                <a href="@Url.Action("Index", "Cart")" class="@(isCart ? ActiveNavClass : InactiveNavClass)">
+                <a href="@Url.Action("Index", "Home", new { area = "" })" class="@(isHome ? ActiveNavClass : InactiveNavClass)">Home</a>
+                <a href="@Url.Action("Index", "Products", new { area = "" })" class="@(isCatalog ? ActiveNavClass : InactiveNavClass)">Catalog</a>
+                <a href="@Url.Action("Index", "Cart", new { area = "" })" class="@(isCart ? ActiveNavClass : InactiveNavClass)">
                     Cart
                     @if (cartCount > 0)
                     {
@@ -51,8 +51,8 @@
             @if (!isLoggedIn)
             {
                 <div class="btn-row">
-                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-secondary btn-sm rounded-pill">Log In</a>
-                    <a href="@Url.Action("Register", "Account")" class="btn btn-primary btn-sm rounded-pill">Register</a>
+                    <a href="@Url.Action("Login", "Account", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">Log In</a>
+                    <a href="@Url.Action("Register", "Account", new { area = "" })" class="btn btn-primary btn-sm rounded-pill">Register</a>
                 </div>
             }
             else
@@ -67,9 +67,9 @@
                     {
                         <a href="@Url.Action("Index", "Dashboard", new { area = "Vendor" })" class="btn btn-outline-secondary btn-sm rounded-pill">Vendor Dashboard</a>
                     }
-                    <a href="@Url.Action("Index", "Orders")" class="btn btn-outline-secondary btn-sm rounded-pill">My Orders</a>
-                    <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary btn-sm rounded-pill">My Profile</a>
-                    <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-secondary btn-sm rounded-pill">Log out</a>
+                    <a href="@Url.Action("Index", "Orders", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">My Orders</a>
+                    <a href="@Url.Action("Index", "Profile", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">My Profile</a>
+                    <a href="@Url.Action("Logout", "Account", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">Log out</a>
                 </div>
             }
         </nav>
@@ -78,7 +78,7 @@
         {
             <div id="mobileBackWrap" class="d-md-none">
                 <button type="button" class="mobile-back-btn" aria-label="Go back"
-                        onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '@Url.Action("Index", "Home")'; } return false;">
+                        onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '@Url.Action("Index", "Home", new { area = "" })'; } return false;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </button>
             </div>
