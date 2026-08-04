@@ -131,6 +131,16 @@ CREATE TABLE IF NOT EXISTS ratings (
   CONSTRAINT uq_ratings_order_product UNIQUE (order_id, product_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS wishlists (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_wishlists_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_wishlists_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  CONSTRAINT uq_wishlists_user_product UNIQUE (user_id, product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Previously enforced unique emails (removed so multiple accounts may share an email)
 -- ALTER TABLE users ADD UNIQUE KEY uq_users_email (email);
 -- Re-enable unique email constraint so emails must be unique for login-by-email

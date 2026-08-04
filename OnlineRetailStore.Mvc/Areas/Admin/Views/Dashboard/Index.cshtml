@@ -1,0 +1,142 @@
+@model OnlineRetailStore.Mvc.Areas.Admin.Models.AdminDashboardVm
+@using OnlineRetailStore.Mvc.Services
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Admin Dashboard";
+}
+@Html.Partial("_AdminNav", "Dashboard")
+
+<div class="dashboard-header">
+    <h2>Dashboard</h2>
+    <p class="text-muted mb-0">Store performance at a glance.</p>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-tile">
+            <div class="stat-num">@MoneyHelper.Format(Model.TotalSales)</div>
+            <div class="stat-label">Total Sales</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-tile">
+            <div class="stat-num">@Model.TotalOrders</div>
+            <div class="stat-label">Orders</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-tile">
+            <div class="stat-num">@Model.TotalProducts</div>
+            <div class="stat-label">Products</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-tile">
+            <div class="stat-num">@Model.TotalVendors</div>
+            <div class="stat-label">Vendors</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-tile">
+            <div class="stat-num">@Model.TotalCustomers</div>
+            <div class="stat-label">Customers</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-tile">
+            <div class="stat-num" style="@(Model.LowStockCount > 0 ? "color:#dc3545;" : "")">@Model.LowStockCount</div>
+            <div class="stat-label">Low Stock</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="panel-card">
+            <div class="panel-card-body">
+                <div class="panel-title">📈 Sales - last 14 days</div>
+                <canvas id="salesChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-3">
+        <div class="panel-card">
+            <div class="panel-card-body">
+                <div class="panel-title">📦 Orders by Status</div>
+                <canvas id="statusChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-3">
+        <div class="panel-card">
+            <div class="panel-card-body">
+                <div class="panel-title">🏆 Top Products</div>
+                <canvas id="topProductsChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.TotalOrders == 0)
+{
+    <div class="panel-card p-5 text-center mt-3">
+        <p class="mb-0 text-muted">No orders yet - charts will populate once customers start buying.</p>
+    </div>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    var salesLabels = @Html.Raw(JsonConvert.SerializeObject(Model.SalesLabels));
+    var salesData = @Html.Raw(JsonConvert.SerializeObject(Model.SalesData));
+    var statusLabels = @Html.Raw(JsonConvert.SerializeObject(Model.StatusLabels));
+    var statusData = @Html.Raw(JsonConvert.SerializeObject(Model.StatusData));
+    var topProductLabels = @Html.Raw(JsonConvert.SerializeObject(Model.TopProductLabels));
+    var topProductData = @Html.Raw(JsonConvert.SerializeObject(Model.TopProductData));
+
+    new Chart(document.getElementById('salesChart'), {
+        type: 'line',
+        data: {
+            labels: salesLabels,
+            datasets: [{
+                label: 'Sales (Rs.)',
+                data: salesData,
+                borderColor: '#6f42c1',
+                backgroundColor: 'rgba(111,66,193,0.15)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: ['#fd7e14', '#0dcaf0', '#198754', '#dc3545', '#6f42c1']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('topProductsChart'), {
+        type: 'bar',
+        data: {
+            labels: topProductLabels,
+            datasets: [{
+                label: 'Units sold',
+                data: topProductData,
+                backgroundColor: '#20c997'
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+</script>

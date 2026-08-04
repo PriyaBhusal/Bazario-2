@@ -45,6 +45,16 @@
                         <button type="submit" class="btn btn-primary rounded-pill btn-lg mt-2">Add to cart</button>
                     }
                 }
+                @if (Model.CanAddToCart)
+                {
+                    using (Html.BeginForm(Model.InWishlist ? "Remove" : "Add", "Wishlist", FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="returnUrl" value="@Request.Url.PathAndQuery" />
+                        <button type="submit" class="btn @(Model.InWishlist ? "btn-outline-danger" : "btn-outline-secondary") rounded-pill btn-lg mt-2 ms-2">@(Model.InWishlist ? "♥ In Wishlist" : "♡ Add to Wishlist")</button>
+                    }
+                }
             </div>
         </div>
     </div>

@@ -2,6 +2,7 @@ using System.Linq;
 using System.Web.Mvc;
 using OnlineRetailStore.Mvc.Filters;
 using OnlineRetailStore.Mvc.Models;
+using OnlineRetailStore.Mvc.Services;
 using OnlineRetailStore.Mvc.ViewModels;
 
 namespace OnlineRetailStore.Mvc.Controllers
@@ -23,7 +24,8 @@ namespace OnlineRetailStore.Mvc.Controllers
                 Phone = user.Phone,
                 Address = user.Address,
                 Role = user.Role ?? "User",
-                MemberSince = user.CreatedAt.ToString("MMMM d, yyyy")
+                MemberSince = user.CreatedAt.ToString("MMMM d, yyyy"),
+                Badges = BadgeService.GetBadges(Db, user.Id)
             };
 
             return View(model);
@@ -40,6 +42,7 @@ namespace OnlineRetailStore.Mvc.Controllers
             model.Id = user.Id;
             model.Role = user.Role ?? "User";
             model.MemberSince = user.CreatedAt.ToString("MMMM d, yyyy");
+            model.Badges = BadgeService.GetBadges(Db, user.Id);
 
             if (!ModelState.IsValid) return View(model);
 

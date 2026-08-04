@@ -25,6 +25,10 @@ namespace OnlineRetailStore.Mvc.Controllers
             var query = Db.Products.Include("Category").Include("Ratings").AsQueryable();
             if (!string.IsNullOrEmpty(cat)) query = query.Where(p => p.Category.Name == cat);
 
+            var wishlisted = IsLoggedIn
+                ? Db.Wishlists.Where(w => w.UserId == CurrentUserId).Select(w => w.ProductId).ToList()
+                : new System.Collections.Generic.List<int>();
+
             model.Products = query
                 .OrderBy(p => p.Id)
                 .ToList()
@@ -38,7 +42,8 @@ namespace OnlineRetailStore.Mvc.Controllers
                     Stock = p.Stock,
                     ImageUrl = p.ImageUrl,
                     RatingCount = p.Ratings.Count,
-                    AvgRating = p.Ratings.Count > 0 ? p.Ratings.Average(r => r.Score) : 0
+                    AvgRating = p.Ratings.Count > 0 ? p.Ratings.Average(r => r.Score) : 0,
+                    InWishlist = wishlisted.Contains(p.Id)
                 })
                 .ToList();
 
@@ -80,6 +85,7 @@ namespace OnlineRetailStore.Mvc.Controllers
                 RatingCount = ratings.Count,
                 AvgRating = ratings.Count > 0 ? ratings.Average(r => r.Score) : 0,
                 CanAddToCart = IsLoggedIn,
+                InWishlist = IsLoggedIn && Db.Wishlists.Any(w => w.UserId == CurrentUserId && w.ProductId == id),
                 Reviews = Db.Ratings
                     .Where(r => r.ProductId == id)
                     .OrderByDescending(r => r.CreatedAt)

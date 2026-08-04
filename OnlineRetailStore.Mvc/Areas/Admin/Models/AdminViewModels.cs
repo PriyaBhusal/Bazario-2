@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineRetailStore.Mvc.Areas.Admin.Models
@@ -66,5 +67,24 @@ namespace OnlineRetailStore.Mvc.Areas.Admin.Models
         public string Email { get; set; }
         public bool IsApproved { get; set; }
         public DateTime CreatedAt { get; set; }
+    }
+
+    public class AdminDashboardVm
+    {
+        public int TotalProducts { get; set; }
+        public int TotalVendors { get; set; }
+        public int TotalCustomers { get; set; }
+        public int TotalOrders { get; set; }
+        public decimal TotalSales { get; set; }
+        public int LowStockCount { get; set; }
+
+        public List<string> SalesLabels { get; set; } = new List<string>();
+        public List<decimal> SalesData { get; set; } = new List<decimal>();
+
+        public List<string> StatusLabels { get; set; } = new List<string>();
+        public List<int> StatusData { get; set; } = new List<int>();
+
+        public List<string> TopProductLabels { get; set; } = new List<string>();
+        public List<int> TopProductData { get; set; } = new List<int>();
     }
 }

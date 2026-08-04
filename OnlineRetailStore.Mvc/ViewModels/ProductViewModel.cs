@@ -20,6 +20,7 @@ namespace OnlineRetailStore.Mvc.ViewModels
         public string ImageUrl { get; set; }
         public double AvgRating { get; set; }
         public int RatingCount { get; set; }
+        public bool InWishlist { get; set; }
 
         public string StarsLabel
         {
@@ -52,5 +53,6 @@ namespace OnlineRetailStore.Mvc.ViewModels
         public double AvgRating { get; set; }
         public List<ReviewViewModel> Reviews { get; set; } = new List<ReviewViewModel>();
         public bool CanAddToCart { get; set; }
+        public bool InWishlist { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+@using OnlineRetailStore.Mvc.Models
 @using OnlineRetailStore.Mvc.Services
 @{
     string area = ViewContext.RouteData.DataTokens["area"] as string ?? "";
@@ -22,6 +23,15 @@
     const string InactiveNavClass = "nav-link-plain";
 
     int cartCount = CartService.ItemCount(Session);
+
+    int earnedBadgeCount = 0;
+    if (isLoggedIn && Session["UserId"] != null)
+    {
+        using (var badgeDb = new AppDbContext())
+        {
+            earnedBadgeCount = BadgeService.EarnedCount(badgeDb, Convert.ToInt32(Session["UserId"]));
+        }
+    }
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -59,14 +69,16 @@
             {
                 <div class="btn-row">
                     <span class="text-muted d-none d-sm-inline">Welcome, @username</span>
+                    <a href="@Url.Action("Index", "Profile", new { area = "" })#badges" class="btn btn-outline-warning btn-sm rounded-pill" title="@earnedBadgeCount badge@(earnedBadgeCount == 1 ? "" : "s") earned">🏆 @earnedBadgeCount</a>
                     @if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
                     {
-                        <a href="@Url.Action("Index", "Users", new { area = "Admin" })" class="btn btn-outline-secondary btn-sm rounded-pill">Admin</a>
+                        <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="btn btn-outline-secondary btn-sm rounded-pill">Admin</a>
                     }
                     @if (string.Equals(role, "Vendor", StringComparison.OrdinalIgnoreCase))
                     {
                         <a href="@Url.Action("Index", "Dashboard", new { area = "Vendor" })" class="btn btn-outline-secondary btn-sm rounded-pill">Vendor Dashboard</a>
                     }
+                    <a href="@Url.Action("Index", "Wishlist", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">Wishlist</a>
                     <a href="@Url.Action("Index", "Orders", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">My Orders</a>
                     <a href="@Url.Action("Index", "Profile", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">My Profile</a>
                     <a href="@Url.Action("Logout", "Account", new { area = "" })" class="btn btn-outline-secondary btn-sm rounded-pill">Log out</a>

@@ -23,5 +23,6 @@ namespace OnlineRetailStore.Mvc.Models
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
     }
 }

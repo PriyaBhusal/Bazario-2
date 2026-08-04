@@ -1,0 +1,57 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.ViewModels.ProductListItemViewModel>
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "My Wishlist";
+}
+
+<div class="dashboard-header">
+    <h2>My Wishlist</h2>
+    <p class="text-muted mb-0">Products you've saved for later.</p>
+</div>
+
+<div class="row g-3">
+    @foreach (var p in Model)
+    {
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card product-card h-100">
+                <img src="@Url.Content(p.ImageUrl)" class="card-img-top" alt="@p.Name" />
+                <div class="card-body">
+                    <small class="text-muted">@p.Category</small>
+                    <h5 class="card-title">@p.Name</h5>
+                    <p class="card-text text-muted small">@p.ShortDescription</p>
+                    <p class="card-text fw-bold mb-1">@MoneyHelper.Format(p.Price)</p>
+                    <p class="card-text"><small class="text-warning">@p.StarsLabel</small></p>
+                    <div class="card-actions">
+                        @Html.ActionLink("View", "Details", "Products", new { id = p.ProductId }, new { @class = "btn btn-sm btn-outline-primary" })
+                        @if (p.Stock <= 0)
+                        {
+                            <button class="btn btn-sm btn-primary disabled" disabled>Out of Stock</button>
+                        }
+                        else
+                        {
+                            using (Html.BeginForm("AddToCart", "Products", FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@p.ProductId" />
+                                <button type="submit" class="btn btn-sm btn-primary">Add to Cart</button>
+                            }
+                        }
+                        @using (Html.BeginForm("Remove", "Wishlist", FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@p.ProductId" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove from wishlist">♥ Remove</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="panel-card p-5 text-center">
+        <p class="mb-0 text-muted">Your wishlist is empty. Browse the <a href="@Url.Action("Index", "Products", new { area = "" })">catalog</a> and tap the heart on anything you like.</p>
+    </div>
+}

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineRetailStore.Mvc.ViewModels
@@ -37,5 +38,6 @@ namespace OnlineRetailStore.Mvc.ViewModels
 
         public string Role { get; set; }
         public string MemberSince { get; set; }
+        public List<BadgeViewModel> Badges { get; set; } = new List<BadgeViewModel>();
     }
 }
