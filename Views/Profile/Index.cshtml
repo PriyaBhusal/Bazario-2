@@ -1,0 +1,49 @@
+@model OnlineRetailStore.Mvc.ViewModels.ProfileViewModel
+@{
+    ViewBag.Title = "My Profile";
+}
+<div class="d-flex justify-content-center" style="min-height:60vh;">
+    <div class="login-card p-4 p-md-5 rounded-4 shadow-sm mt-4" style="max-width:520px; width:100%;">
+        <h2 class="mb-1">My Profile</h2>
+        <p class="text-muted">Member since @Model.MemberSince &middot; Role: @Model.Role</p>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert alert-success">@ViewBag.SuccessMessage</div>
+        }
+
+        @using (Html.BeginForm("Index", "Profile", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "text-danger mb-2" })
+            @Html.HiddenFor(m => m.Id)
+
+            <div class="mb-3">
+                @Html.Label("Username", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control form-control-lg rounded-3" })
+                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.Label("Email", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg rounded-3" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.Label("Phone", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control form-control-lg rounded-3" })
+            </div>
+
+            <div class="mb-3">
+                @Html.Label("Address", "Delivery address", new { @class = "form-label" })
+                @Html.TextAreaFor(m => m.Address, 2, 1, new { @class = "form-control rounded-3" })
+            </div>
+
+            <div class="d-grid mb-2">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">Save Changes</button>
+            </div>
+        }
+        @Html.ActionLink("Change password", "ChangePassword", "Account", null, new { @class = "small" })
+    </div>
+</div>

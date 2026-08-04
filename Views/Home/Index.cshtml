@@ -1,0 +1,233 @@
+@model OnlineRetailStore.Mvc.ViewModels.HomeViewModel
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<main>
+    <!-- Hero -->
+    <section class="hero text-center">
+        <div class="container">
+            <div class="hero-inner mx-auto animate-in">
+                <h1 class="display-4">Everything you need,<br /><span class="iridescent-text">in one cart.</span></h1>
+                <p class="lead text-muted mx-auto">Clothes, gadgets, tools — all in one place at Bazario, delivered fast with zero fuss.</p>
+                <div class="btn-row justify-content-center mt-4">
+                    @Html.ActionLink("Start Shopping", "Index", "Products", null, new { @class = "btn btn-primary btn-lg rounded-pill" })
+                    @Html.ActionLink("View My Cart", "Index", "Cart", null, new { @class = "btn btn-outline-secondary btn-lg rounded-pill" })
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @if (Model.IsLoggedIn)
+    {
+        <section class="container mb-4">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">
+                        🔔 Notifications
+                        @if (Model.UnreadCount > 0)
+                        {
+                            <span class="badge bg-primary rounded-pill">@Model.UnreadCount new</span>
+                        }
+                    </h5>
+                    @using (Html.BeginForm("MarkNotificationsRead", "Home", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark all read</button>
+                    }
+                </div>
+                @foreach (var n in Model.Notifications)
+                {
+                    <div class="py-2 border-top @(n.IsRead ? "" : "fw-bold")">
+                        @n.Message
+                        <small class="text-muted d-block fw-normal">@n.CreatedAt.ToString("MMM d, yyyy h:mm tt")</small>
+                    </div>
+                }
+                @if (Model.Notifications.Count == 0)
+                {
+                    <span class="text-muted">No notifications yet.</span>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- Stats -->
+    <section class="container my-5">
+        <div class="row text-center">
+            <div class="col-6 col-md-3 mb-3 stat-block">
+                <p class="display-6 stat-value mb-0">@Model.StatCustomers.ToString("N0")</p>
+                <small class="text-muted">Registered customers</small>
+            </div>
+            <div class="col-6 col-md-3 mb-3 stat-block">
+                <p class="display-6 stat-value mb-0">@Model.StatStock.ToString("N0")</p>
+                <small class="text-muted">Products in stock</small>
+            </div>
+            <div class="col-6 col-md-3 mb-3 stat-block">
+                <p class="display-6 stat-value mb-0">48hr</p>
+                <small class="text-muted">Average delivery</small>
+            </div>
+            <div class="col-6 col-md-3 mb-3 stat-block">
+                <p class="display-6 stat-value mb-0">@Model.StatDelivered.ToString("N0")</p>
+                <small class="text-muted">Orders delivered</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="container mb-5" id="features">
+        <div class="text-center mb-4">
+            <h3>Built for a better cart</h3>
+            <p class="text-muted">The essentials, done right.</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">🚚</div>
+                    <h5>Fast Delivery</h5>
+                    <p class="text-muted mb-0">Most orders arrive within 48 hours.</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h5>Secure Payments</h5>
+                    <p class="text-muted mb-0">Checkout is encrypted end to end.</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">↩️</div>
+                    <h5>Easy Returns</h5>
+                    <p class="text-muted mb-0">30-day hassle-free return window.</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h5>24/7 Support</h5>
+                    <p class="text-muted mb-0">Real humans, always ready to help.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="container mb-5" id="categories">
+        <div class="text-center mb-4">
+            <h3>Shop by category</h3>
+            <p class="text-muted">Pick a lane, we've stocked it well.</p>
+        </div>
+        <div class="row g-3">
+            @foreach (var c in Model.Categories)
+            {
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <a href="@Url.Action("Index", "Products", new { cat = c.Name })" class="glass-card p-3 d-block h-100 text-decoration-none text-body">
+                        <div class="category-icon">@c.Icon</div>
+                        <small class="text-muted">@c.Name</small>
+                        <h5 class="mt-1">@c.Name</h5>
+                        <p class="text-muted mb-0">@c.Description</p>
+                        <p class="text-primary mt-3 fw-bold">Shop now &rarr;</p>
+                    </a>
+                </div>
+            }
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="@Url.Action("Index", "Products")" class="glass-card p-3 d-block h-100 text-decoration-none text-body">
+                    <div class="category-icon">🛒</div>
+                    <small class="text-muted">Everything</small>
+                    <h5 class="mt-1">All Categories</h5>
+                    <p class="text-muted mb-0">Browse our entire catalog.</p>
+                    <p class="text-primary mt-3 fw-bold">Shop now &rarr;</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Picks -->
+    <section class="container mb-5" id="picks">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <h3>This week's picks</h3>
+                <p class="text-muted mb-0">Hand-picked favorites, in stock today.</p>
+            </div>
+            <a href="@Url.Action("Index", "Products")" class="fw-bold text-decoration-none">See full catalog →</a>
+        </div>
+        <div class="row g-3">
+            @foreach (var p in Model.FeaturedProducts)
+            {
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card product-card h-100">
+                        <img src="@Url.Content(p.ImageUrl)" class="card-img-top" alt="@p.Name" />
+                        <div class="card-body">
+                            <small class="text-muted">@p.Category</small>
+                            <h5 class="card-title">@p.Name</h5>
+                            <p class="text-muted mb-2">@p.ShortDescription</p>
+                            <p class="fw-bold mb-2">@MoneyHelper.Format(p.Price)</p>
+                            <div class="card-actions">
+                                @Html.ActionLink("View", "Details", "Products", new { id = p.ProductId }, new { @class = "btn btn-sm btn-outline-primary" })
+                                @if (p.Stock <= 0)
+                                {
+                                    <button class="btn btn-sm btn-primary disabled" disabled>Out of Stock</button>
+                                }
+                                else if (!Model.IsLoggedIn)
+                                {
+                                    <a href="@Url.Action("Login", "Account")" class="btn btn-sm btn-primary disabled" title="Log in to add to cart">Add to Cart</a>
+                                }
+                                else
+                                {
+                                    using (Html.BeginForm("AddFeaturedToCart", "Home", FormMethod.Post, new { style = "display:inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@p.ProductId" />
+                                        <button type="submit" class="btn btn-sm btn-primary">Add to Cart</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    @if (Model.Testimonials.Count > 0)
+    {
+        <section class="container mb-5" id="testimonials">
+            <div class="text-center mb-4">
+                <h3>What people are saying</h3>
+            </div>
+            <div class="row g-3">
+                @foreach (var t in Model.Testimonials)
+                {
+                    <div class="col-12 col-md-4">
+                        <div class="testimonial-card h-100">
+                            <div class="stars">@(new string('★', t.Rating))<span class="text-muted">@(new string('☆', 5 - t.Rating))</span></div>
+                            <p class="mb-3">&ldquo;@t.Comment&rdquo;</p>
+                            <div class="testimonial-author">
+                                <span class="avatar-badge">@t.Username.Substring(0, 1).ToUpper()</span>
+                                <div>
+                                    <div class="fw-bold">@t.Username</div>
+                                    <small class="text-muted">Verified buyer</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- Newsletter -->
+    <section class="container mb-5">
+        <div class="p-4 p-md-5 newsletter-banner d-flex flex-column flex-md-row align-items-center gap-3">
+            <div class="flex-grow-1 text-center text-md-start">
+                <h4 class="mb-1">Join our newsletter</h4>
+                <p class="mb-0">Exclusive deals &amp; new arrivals — delivered weekly.</p>
+            </div>
+            <div class="newsletter-form">
+                <input type="email" class="form-control" placeholder="Your email" />
+                <button class="btn btn-light rounded-pill fw-bold">Sign Up</button>
+            </div>
+        </div>
+    </section>
+</main>

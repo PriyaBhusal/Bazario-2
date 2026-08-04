@@ -1,0 +1,55 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.Areas.Admin.Models.VendorUserVm>
+@{
+    ViewBag.Title = "Manage Vendors";
+}
+@Html.Partial("_AdminNav", "Vendors")
+
+<h2>Admin - Manage Vendors</h2>
+<p class="text-muted">Approve, edit, or remove vendor accounts. Once approved, a vendor manages their own products from their Vendor Dashboard.</p>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-danger">@TempData["Message"]</div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>ID</th><th>Username</th><th>Email</th><th>Approved</th><th>Joined</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Username</td>
+                    <td>@u.Email</td>
+                    <td>@(u.IsApproved ? "Yes" : "No")</td>
+                    <td>@u.CreatedAt.ToString("MMM d, yyyy")</td>
+                    <td class="text-end text-nowrap">
+                        @if (!u.IsApproved)
+                        {
+                            using (Html.BeginForm("Approve", "Users", new { id = u.Id }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                            }
+                        }
+                        else
+                        {
+                            using (Html.BeginForm("Decline", "Users", new { id = u.Id }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Revoke</button>
+                            }
+                        }
+                        @using (Html.BeginForm("Delete", "Users", new { id = u.Id }, FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this vendor account?');">Delete</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

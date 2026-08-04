@@ -1,0 +1,8 @@
+@{
+    ViewBag.Title = "Payment not confirmed";
+}
+<div class="panel-card p-5 text-center">
+    <p style="font-size:1.2rem; font-weight:700;">Payment not confirmed</p>
+    <p class="text-muted mb-3">@ViewBag.FailMessage</p>
+    @Html.ActionLink("Go to My Orders", "Index", "Orders", null, new { @class = "btn btn-primary rounded-pill" })
+</div>

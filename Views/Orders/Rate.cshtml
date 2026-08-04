@@ -1,0 +1,53 @@
+@model OnlineRetailStore.Mvc.ViewModels.EditReviewViewModel
+@{
+    ViewBag.Title = "Rate Product";
+}
+<div class="d-flex justify-content-center align-items-center" style="min-height:60vh;">
+    <div class="login-card p-4 p-md-5 rounded-4 shadow-sm" style="max-width:480px; width:100%;">
+
+        @if (!Model.Eligible)
+        {
+            <div class="text-center">
+                <h4>Can't rate this item</h4>
+                <p class="text-muted">This product isn't part of a delivered order on your account, or has already been rated.</p>
+                @Html.ActionLink("Back to My Orders", "Index", "Orders", null, new { @class = "btn btn-primary rounded-pill" })
+            </div>
+        }
+        else
+        {
+            <div class="text-center mb-3">
+                <h4 class="mb-0">Rate your purchase</h4>
+                <p class="text-muted mt-2">@Model.ProductName</p>
+            </div>
+
+            using (Html.BeginForm("Rate", "Orders", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false, "", new { @class = "text-danger mb-2" })
+                @Html.HiddenFor(m => m.OrderId)
+                @Html.HiddenFor(m => m.ProductId)
+
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    @Html.DropDownListFor(m => m.Rating, new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "5 - Excellent", Value = "5" },
+                        new SelectListItem { Text = "4 - Good", Value = "4" },
+                        new SelectListItem { Text = "3 - Average", Value = "3" },
+                        new SelectListItem { Text = "2 - Poor", Value = "2" },
+                        new SelectListItem { Text = "1 - Very Poor", Value = "1" }
+                    }, new { @class = "form-select" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Comments</label>
+                    @Html.TextAreaFor(m => m.Comment, 3, 1, new { @class = "form-control", placeholder = "Optional" })
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">Submit Rating</button>
+                </div>
+            }
+        }
+    </div>
+</div>

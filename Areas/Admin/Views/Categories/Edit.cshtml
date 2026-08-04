@@ -1,0 +1,28 @@
+@model OnlineRetailStore.Mvc.Areas.Admin.Models.CategoryVm
+@{
+    ViewBag.Title = "Edit Category";
+}
+@Html.Partial("_AdminNav", "Categories")
+
+<h2>Edit Category</h2>
+
+<div class="card mb-4" style="max-width:640px;">
+    <div class="card-body">
+        @using (Html.BeginForm("Edit", "Categories", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            @Html.HiddenFor(m => m.Id)
+            <div class="mb-2">
+                <label>Name</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            </div>
+            <div class="mb-2">
+                <label>Description</label>
+                @Html.TextAreaFor(m => m.Description, 2, 1, new { @class = "form-control" })
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-outline-secondary" })
+        }
+    </div>
+</div>

@@ -1,0 +1,10 @@
+@model string
+@{
+    string Cls(string tab) => tab == Model ? "btn btn-sm btn-primary" : "btn btn-sm btn-outline-secondary";
+}
+<div class="btn-row mb-3">
+    <a href="@Url.Action("Index", "Users", new { area = "Admin" })" class="@Cls("Vendors")">Vendors</a>
+    <a href="@Url.Action("Index", "Categories", new { area = "Admin" })" class="@Cls("Categories")">Categories</a>
+    <a href="@Url.Action("Index", "Products", new { area = "Admin" })" class="@Cls("Products")">Products</a>
+    <a href="@Url.Action("Index", "Orders", new { area = "Admin" })" class="@Cls("Orders")">Orders</a>
+</div>

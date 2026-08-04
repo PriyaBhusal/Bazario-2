@@ -1,0 +1,119 @@
+/* Bazario theme — plain CSS extracted from the IMART design system.
+   Link this after any framework reset (e.g. in your Site.Master <head>):
+   <link rel="stylesheet" href="~/Content/bazario-theme.css" /> */
+
+@import url('https://fonts.cdnfonts.com/css/geist-sans');
+/* If that CDN is blocked on your network, delete the line above and self-host
+   Geist (https://vercel.com/font) or just rely on the system-ui fallback below. */
+
+:root {
+  --bg: #FFFFFF;
+  --surface: #F5F5F7;
+  --border: #E3E3E8;
+  --text: #1D1D1F;
+  --muted: #6E6E73;
+  --accent: #0071E3;
+  --gradient: linear-gradient(135deg, #007AFF, #AF52DE, #FF375F);
+}
+
+html { background: var(--bg); color: var(--text); }
+body {
+  margin: 0;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: #005bb8; }
+
+/* Gradient accents — use sparingly (2-3 spots per page) */
+.iridescent-line { height: 1px; background: var(--gradient); }
+.iridescent-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.iridescent-ring {
+  border: 2px solid transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--gradient) border-box;
+}
+
+/* Glass panels — cards, rows, summaries */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border-radius: 24px;
+}
+
+/* Hero backdrops */
+.hero-glow {
+  background: radial-gradient(ellipse 60% 50% at 50% 45%, rgba(0, 122, 255, 0.1), rgba(175, 82, 222, 0.05) 55%, transparent 75%);
+}
+.aurora { position: relative; overflow: hidden; }
+.aurora::before, .aurora::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.aurora::before {
+  background: radial-gradient(circle at 30% 30%, rgba(0, 122, 255, 0.14), transparent 60%);
+  animation: aurora-a 18s ease-in-out infinite;
+}
+.aurora::after {
+  background: radial-gradient(circle at 70% 60%, rgba(175, 82, 222, 0.1), transparent 60%);
+  animation: aurora-b 22s ease-in-out infinite;
+}
+@keyframes aurora-a { 0%, 100% { transform: translate(-10%, -5%) scale(1); } 50% { transform: translate(8%, 6%) scale(1.15); } }
+@keyframes aurora-b { 0%, 100% { transform: translate(10%, 5%) scale(1.1); } 50% { transform: translate(-6%, -8%) scale(0.95); } }
+.noise { position: relative; }
+.noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Buttons — pair with border-radius:9999px; padding:12px 28px; font-weight:600 */
+.btn-primary {
+  background: linear-gradient(to bottom, #1580f0, #0064d0);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 20px -6px rgba(0, 113, 227, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+.btn-primary:hover { filter: brightness(1.07); box-shadow: 0 12px 28px -6px rgba(0, 113, 227, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { filter: grayscale(0.4) brightness(0.9); cursor: not-allowed; }
+
+.btn-glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+.btn-glass:hover { background: rgba(255, 255, 255, 0.9); border-color: #c9c9d0; }
+.btn-glass:active { transform: scale(0.97); }
+
+/* Entrance animation helper */
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--delay, 0s); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up, .aurora::before, .aurora::after { animation: none; }
+}

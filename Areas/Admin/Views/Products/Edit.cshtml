@@ -1,0 +1,50 @@
+@model OnlineRetailStore.Mvc.Areas.Admin.Models.ProductAdminVm
+@{
+    ViewBag.Title = "Edit Product";
+}
+@Html.Partial("_AdminNav", "Products")
+
+<h2>Edit Product</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        @using (Html.BeginForm("Edit", "Products", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            @Html.HiddenFor(m => m.Id)
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label>Name</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <label>Category</label>
+                    @Html.DropDownListFor(m => m.CategoryId, (SelectList)ViewBag.Categories, new { @class = "form-select" })
+                </div>
+                <div class="col-md-2">
+                    <label>Price</label>
+                    @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", step = "0.01" })
+                </div>
+                <div class="col-md-2">
+                    <label>Stock</label>
+                    @Html.TextBoxFor(m => m.Stock, new { @class = "form-control", type = "number" })
+                </div>
+                <div class="col-md-3">
+                    <label>Short description</label>
+                    @Html.TextBoxFor(m => m.ShortDescription, new { @class = "form-control" })
+                </div>
+                <div class="col-md-6">
+                    <label>Description</label>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <label>Image URL</label>
+                    @Html.TextBoxFor(m => m.ImageUrl, new { @class = "form-control" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-outline-secondary mt-3" })
+        }
+    </div>
+</div>

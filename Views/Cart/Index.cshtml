@@ -1,0 +1,73 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.Services.CartItem>
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "Shopping Cart";
+}
+
+<div class="dashboard-header">
+    <h2>Your Cart</h2>
+</div>
+
+@if (TempData["CartMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["CartMessage"]</div>
+}
+
+@if (Model.Count > 0)
+{
+    <div class="d-flex flex-column gap-3 mb-3">
+        @foreach (var item in Model)
+        {
+            <div class="cart-line d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div>
+                    <p class="mb-0 fw-semibold">@item.Name</p>
+                    <p class="mb-0 text-muted small">@MoneyHelper.Format(item.UnitPrice) each</p>
+                </div>
+                <div class="d-flex align-items-center gap-4 flex-wrap">
+                    <div class="qty-stepper d-flex align-items-center gap-2">
+                        @using (Html.BeginForm("Decrement", "Cart", FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button type="submit" class="qty-btn">&minus;</button>
+                        }
+                        <span class="fw-semibold" style="min-width:1.2rem; text-align:center; display:inline-block;">@item.Quantity</span>
+                        @using (Html.BeginForm("Increment", "Cart", FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button type="submit" class="qty-btn">+</button>
+                        }
+                    </div>
+                    <p class="mb-0 fw-bold" style="min-width:90px; text-align:right;">@MoneyHelper.Format(item.LineTotal)</p>
+                    @using (Html.BeginForm("Remove", "Cart", FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@item.ProductId" />
+                        <button type="submit" class="btn btn-sm btn-link text-danger p-0">Remove</button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="cart-summary d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <p class="mb-0 text-muted small">Total</p>
+            <p class="mb-0 iridescent-text" style="font-size:1.9rem; font-weight:800;">@ViewBag.Total</p>
+        </div>
+        @using (Html.BeginForm("Checkout", "Cart", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill">Checkout</button>
+        }
+    </div>
+}
+else
+{
+    <div class="panel-card p-5 text-center">
+        <p class="mb-1" style="font-size:1.2rem; font-weight:700;">Your cart is empty</p>
+        <p class="text-muted mb-3">Go find something you like.</p>
+        @Html.ActionLink("Browse Catalog", "Index", "Products", null, new { @class = "btn btn-primary rounded-pill" })
+    </div>
+}

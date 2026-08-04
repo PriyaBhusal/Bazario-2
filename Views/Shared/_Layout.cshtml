@@ -1,0 +1,103 @@
+@using OnlineRetailStore.Mvc.Services
+@{
+    string area = ViewContext.RouteData.DataTokens["area"] as string ?? "";
+    string controllerName = ViewContext.RouteData.Values["controller"] as string ?? "";
+    string actionName = ViewContext.RouteData.Values["action"] as string ?? "";
+
+    bool isAdminRoute = string.Equals(area, "Admin", StringComparison.OrdinalIgnoreCase);
+    bool isAuthPage = string.Equals(controllerName, "Account", StringComparison.OrdinalIgnoreCase)
+                       && (string.Equals(actionName, "Login", StringComparison.OrdinalIgnoreCase)
+                           || string.Equals(actionName, "Register", StringComparison.OrdinalIgnoreCase));
+    bool hideChrome = isAdminRoute || isAuthPage;
+
+    bool isLoggedIn = !string.IsNullOrEmpty(Session["User"] as string);
+    string username = Session["User"] as string;
+    string role = Session["Role"] as string;
+
+    bool isHome = string.Equals(controllerName, "Home", StringComparison.OrdinalIgnoreCase) && !isAdminRoute;
+    bool isCatalog = string.Equals(controllerName, "Products", StringComparison.OrdinalIgnoreCase);
+    bool isCart = string.Equals(controllerName, "Cart", StringComparison.OrdinalIgnoreCase);
+
+    const string ActiveNavClass = "btn btn-primary btn-sm rounded-pill";
+    const string InactiveNavClass = "nav-link-plain";
+
+    int cartCount = CartService.ItemCount(Session);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewBag.Title ?? "Bazario") - Bazario</title>
+    @Styles.Render("~/Content/css")
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+</head>
+<body>
+    @if (!hideChrome)
+    {
+        <nav class="navbar-landing d-flex align-items-center justify-content-between">
+            <a href="@Url.Action("Index", "Home")" class="brand text-decoration-none">Bazario</a>
+            <div class="nav-links d-none d-md-flex">
+                <a href="@Url.Action("Index", "Home")" class="@(isHome ? ActiveNavClass : InactiveNavClass)">Home</a>
+                <a href="@Url.Action("Index", "Products")" class="@(isCatalog ? ActiveNavClass : InactiveNavClass)">Catalog</a>
+                <a href="@Url.Action("Index", "Cart")" class="@(isCart ? ActiveNavClass : InactiveNavClass)">
+                    Cart
+                    @if (cartCount > 0)
+                    {
+                        <span class="badge bg-primary rounded-pill">@cartCount</span>
+                    }
+                </a>
+            </div>
+            @if (!isLoggedIn)
+            {
+                <div class="btn-row">
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-secondary btn-sm rounded-pill">Log In</a>
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-primary btn-sm rounded-pill">Register</a>
+                </div>
+            }
+            else
+            {
+                <div class="btn-row">
+                    <span class="text-muted d-none d-sm-inline">Welcome, @username</span>
+                    @if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <a href="@Url.Action("Index", "Users", new { area = "Admin" })" class="btn btn-outline-secondary btn-sm rounded-pill">Admin</a>
+                    }
+                    @if (string.Equals(role, "Vendor", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <a href="@Url.Action("Index", "Dashboard", new { area = "Vendor" })" class="btn btn-outline-secondary btn-sm rounded-pill">Vendor Dashboard</a>
+                    }
+                    <a href="@Url.Action("Index", "Orders")" class="btn btn-outline-secondary btn-sm rounded-pill">My Orders</a>
+                    <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary btn-sm rounded-pill">My Profile</a>
+                    <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-secondary btn-sm rounded-pill">Log out</a>
+                </div>
+            }
+        </nav>
+        <div class="nav-gradient-line"></div>
+        if (!isHome)
+        {
+            <div id="mobileBackWrap" class="d-md-none">
+                <button type="button" class="mobile-back-btn" aria-label="Go back"
+                        onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '@Url.Action("Index", "Home")'; } return false;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+            </div>
+        }
+    }
+
+    <div id="bodyContainer" class="@(hideChrome ? "" : "container body-content")">
+        @RenderBody()
+        @if (!hideChrome)
+        {
+            <hr />
+            <footer id="siteFooter">
+                <p>&copy; @DateTime.Now.Year - Bazario</p>
+            </footer>
+        }
+    </div>
+
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

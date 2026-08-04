@@ -1,0 +1,55 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.Areas.Admin.Models.CategoryVm>
+@{
+    ViewBag.Title = "Manage Categories";
+}
+@Html.Partial("_AdminNav", "Categories")
+
+<h2>Admin - Manage Categories</h2>
+<p class="text-muted">Create, edit, and remove product categories.</p>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<div class="card mb-4" style="max-width:640px;">
+    <div class="card-body">
+        <h5 class="card-title">Add category</h5>
+        @using (Html.BeginForm("Add", "Categories", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="mb-2">
+                <label>Name</label>
+                <input type="text" name="Name" class="form-control" required />
+            </div>
+            <div class="mb-2">
+                <label>Description</label>
+                <textarea name="Description" rows="2" class="form-control" placeholder="Optional"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Category</button>
+        }
+    </div>
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.Name</td>
+                <td>@c.Description</td>
+                <td class="text-end">
+                    @Html.ActionLink("Edit", "Edit", new { id = c.Id }, new { @class = "btn btn-sm btn-outline-secondary" })
+                    @using (Html.BeginForm("Delete", "Categories", new { id = c.Id }, FormMethod.Post, new { style = "display:inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this category?');">Delete</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

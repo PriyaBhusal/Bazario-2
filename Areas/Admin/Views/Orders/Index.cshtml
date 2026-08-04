@@ -1,0 +1,57 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.Areas.Admin.Models.AdminOrderVm>
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "Manage Orders";
+}
+@Html.Partial("_AdminNav", "Orders")
+
+<h2>Admin - Manage Orders</h2>
+<p class="text-muted">Move orders through the delivery pipeline or cancel them.</p>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>ID</th><th>Customer</th><th>Email</th><th>Items</th><th>Status</th><th>Total</th><th>Placed</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.Id</td>
+                    <td>@o.Username</td>
+                    <td>@o.Email</td>
+                    <td style="max-width:280px;">@o.Items</td>
+                    <td>@o.Status</td>
+                    <td>@MoneyHelper.Format(o.Total)</td>
+                    <td>@o.CreatedAt.ToString("MMM d, yyyy")</td>
+                    <td class="text-end text-nowrap">
+                        @if (o.Status == "Pending")
+                        {
+                            using (Html.BeginForm("OutForDelivery", "Orders", new { id = o.Id }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-info">Out for delivery</button>
+                            }
+                        }
+                        @if (o.Status == "Sent out for delivery")
+                        {
+                            using (Html.BeginForm("Delivered", "Orders", new { id = o.Id }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success">Delivered</button>
+                            }
+                        }
+                        @if (o.Status != "Cancelled" && o.Status != "Delivered")
+                        {
+                            using (Html.BeginForm("CancelOrder", "Orders", new { id = o.Id }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this order and restock its items?');">Cancel</button>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

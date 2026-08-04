@@ -1,0 +1,83 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.Areas.Admin.Models.ProductAdminVm>
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "Manage Products";
+}
+@Html.Partial("_AdminNav", "Products")
+
+<h2>Admin - Manage Products</h2>
+<p class="text-muted">Add, edit, or remove products across every vendor and the store's own catalog.</p>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Add product</h5>
+        @using (Html.BeginForm("Add", "Products", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label>Name</label>
+                    <input type="text" name="Name" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label>Category</label>
+                    @Html.DropDownList("CategoryId", (SelectList)ViewBag.Categories, "Select category", new { @class = "form-select" })
+                </div>
+                <div class="col-md-2">
+                    <label>Price</label>
+                    <input type="number" step="0.01" min="0" name="Price" class="form-control" required />
+                </div>
+                <div class="col-md-2">
+                    <label>Stock</label>
+                    <input type="number" min="0" name="Stock" class="form-control" value="0" required />
+                </div>
+                <div class="col-md-3">
+                    <label>Short description</label>
+                    <input type="text" name="ShortDescription" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label>Description</label>
+                    <input type="text" name="Description" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Image URL</label>
+                    <input type="text" name="ImageUrl" class="form-control" placeholder="~/Content/Images/placeholder.svg" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Product</button>
+        }
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Owner</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Name</td>
+                    <td>@p.CategoryName</td>
+                    <td>@MoneyHelper.Format(p.Price)</td>
+                    <td>@p.Stock</td>
+                    <td>@p.OwnerName</td>
+                    <td class="text-end">
+                        @Html.ActionLink("Edit", "Edit", new { id = p.Id }, new { @class = "btn btn-sm btn-outline-secondary" })
+                        @using (Html.BeginForm("Delete", "Products", new { id = p.Id }, FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this product?');">Delete</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,30 @@
+@model OnlineRetailStore.Mvc.ViewModels.ESewaPaymentModel
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "Redirecting to eSewa";
+}
+
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height:50vh;">
+    <h3>Redirecting you to eSewa&hellip;</h3>
+    <p class="text-muted">Please wait while we take you to the eSewa sandbox to complete your payment.</p>
+</div>
+
+<form id="esewaForm" method="POST" action="@EsewaService.FormUrl">
+    <input type="hidden" name="amount" value="@Model.Amount" />
+    <input type="hidden" name="tax_amount" value="@Model.TaxAmount" />
+    <input type="hidden" name="total_amount" value="@Model.TotalAmount" />
+    <input type="hidden" name="transaction_uuid" value="@Model.TransactionUuid" />
+    <input type="hidden" name="product_code" value="@Model.ProductCode" />
+    <input type="hidden" name="product_service_charge" value="@Model.ProductServiceCharge" />
+    <input type="hidden" name="product_delivery_charge" value="@Model.ProductDeliveryCharge" />
+    <input type="hidden" name="success_url" value="@Model.SuccessUrl" />
+    <input type="hidden" name="failure_url" value="@Model.FailureUrl" />
+    <input type="hidden" name="signed_field_names" value="@Model.SignedFieldNames" />
+    <input type="hidden" name="signature" value="@Model.Signature" />
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('esewaForm').submit();
+    </script>
+}

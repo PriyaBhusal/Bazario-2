@@ -1,0 +1,18 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# NuGet packages restore to "..\packages\" (one directory above this repo's root),
+# matching the layout of the original multi-project repo this was split from.
+# That means after cloning, run NuGet restore from one level up, or point NuGet's
+# packages folder at ..\packages relative to this .csproj.
+*.nupkg
+
+# OS cruft
+Thumbs.db
+.DS_Store

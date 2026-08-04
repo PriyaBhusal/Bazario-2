@@ -1,0 +1,69 @@
+@model OnlineRetailStore.Mvc.ViewModels.ProductDetailsViewModel
+@using OnlineRetailStore.Mvc.Services
+@{
+    ViewBag.Title = "Product Details";
+    int rounded = Model.RatingCount > 0 ? (int)System.Math.Round(Model.AvgRating) : 0;
+}
+
+<div class="panel-card">
+    <div class="panel-card-body">
+        <div class="row g-4">
+            <div class="col-md-5">
+                <img src="@Url.Content(Model.ImageUrl)" class="img-fluid rounded-3 w-100" style="object-fit:cover; max-height:360px;" alt="@Model.Name" />
+            </div>
+            <div class="col-md-7">
+                <small class="text-muted">@Model.CategoryName</small>
+                <h2 class="mt-1">@Model.Name</h2>
+                <h4 class="iridescent-text">@MoneyHelper.Format(Model.Price)</h4>
+                <div class="mb-3">
+                    @if (Model.RatingCount > 0)
+                    {
+                        <span class="text-warning">@(new string('★', rounded))@(new string('☆', 5 - rounded))</span>
+                        <span class="text-muted ms-1">@Model.AvgRating.ToString("0.0") out of 5 (@Model.RatingCount review@(Model.RatingCount == 1 ? "" : "s"))</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No ratings yet</span>
+                    }
+                </div>
+                <p class="text-muted">@Model.Description</p>
+
+                @if (Model.Stock <= 0)
+                {
+                    <button class="btn btn-primary rounded-pill btn-lg mt-2 disabled" disabled>Out of Stock</button>
+                }
+                else if (!Model.CanAddToCart)
+                {
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-primary rounded-pill btn-lg mt-2" title="Log in to add to cart">Add to cart</a>
+                }
+                else
+                {
+                    using (Html.BeginForm("AddToCartFromDetails", "Products", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-primary rounded-pill btn-lg mt-2">Add to cart</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-card mt-4">
+    <div class="panel-card-body">
+        <div class="panel-title">💬 Customer Reviews</div>
+        @foreach (var r in Model.Reviews)
+        {
+            <div class="border-bottom py-2">
+                <span class="text-warning">@(new string('★', r.Rating))</span><span class="text-muted">@(new string('☆', 5 - r.Rating))</span>
+                <span class="fw-bold ms-1">@r.Username</span>
+                <p class="mb-0 text-muted">@r.Comment</p>
+            </div>
+        }
+        @if (Model.Reviews.Count == 0)
+        {
+            <span class="text-muted">No reviews yet.</span>
+        }
+    </div>
+</div>
