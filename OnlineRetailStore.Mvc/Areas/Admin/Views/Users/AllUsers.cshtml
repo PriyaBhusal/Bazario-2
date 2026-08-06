@@ -1,0 +1,46 @@
+@model System.Collections.Generic.List<OnlineRetailStore.Mvc.Areas.Admin.Models.UserAdminVm>
+@{
+    ViewBag.Title = "All Users";
+}
+@Html.Partial("_AdminNav", "AllUsers")
+
+<h2>Admin - All Users</h2>
+<p class="text-muted">Every account in the system. Promote a user to Admin to grant them full access to this admin area.</p>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-danger">@TempData["Message"]</div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Username</td>
+                    <td>@u.Email</td>
+                    <td>@u.Role</td>
+                    <td>@u.CreatedAt.ToString("MMM d, yyyy")</td>
+                    <td class="text-end text-nowrap">
+                        @if (!string.Equals(u.Role, "Admin", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            using (Html.BeginForm("MakeAdmin", "Users", new { id = u.Id }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Make @u.Username an Admin?');">Make Admin</button>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Admin</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

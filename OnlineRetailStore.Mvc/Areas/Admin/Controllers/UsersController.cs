@@ -67,5 +67,39 @@ namespace OnlineRetailStore.Mvc.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+        // GET: Admin/Users/AllUsers
+        // Lists every account so an existing admin can promote someone to Admin.
+        public ActionResult AllUsers()
+        {
+            var users = Db.Users
+                .OrderBy(u => u.Id)
+                .Select(u => new UserAdminVm
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    Role = u.Role,
+                    CreatedAt = u.CreatedAt
+                })
+                .ToList();
+
+            return View(users);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult MakeAdmin(int id)
+        {
+            var user = Db.Users.Find(id);
+            if (user != null && !string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                user.Role = "Admin";
+                user.IsApproved = true;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("AllUsers");
+        }
     }
 }

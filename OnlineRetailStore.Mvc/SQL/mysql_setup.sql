@@ -120,4 +120,4 @@ ALTER TABLE users ADD UNIQUE KEY uq_users_email (email);
 -- Seed admin account only (uses MySQL SHA2 to store SHA-256 hash of the cleartext password)
 -- Password used here is for development only. Change it in production.
 INSERT IGNORE INTO users (username, passwordhash, email, role, is_approved) VALUES
-  ('admin', SHA2('AdminPass123!', 256), 'admin@example.com', 'Admin', 1);
+  ('admin', SHA2('admin123', 256), 'admin@gmail.com', 'Admin', 1);
